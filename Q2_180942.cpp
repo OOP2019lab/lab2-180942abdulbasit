@@ -26,6 +26,13 @@ void readDataFromFile( gitHubUser * users, string filepath) // to read data from
 		getline(fin,users[i].firstName);
 		getline(fin,users[i].userName);
 		getline(fin,users[i].email);
-		fin>>
+		fin>>folders;
+		users[i].folderName=new string[folders];
+		for(int j=0; j<folders; j++)
+		{
+			getline(fin,users[i].folderName[j]);
+		}
+
+
 
 }
