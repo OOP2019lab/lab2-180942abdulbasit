@@ -32,7 +32,7 @@ void readDataFromFile( gitHubUser * users, string filepath) // to read data from
 		{
 			getline(fin,users[i].folderName[j]);
 		}
-
+	}	
 
 
 }
