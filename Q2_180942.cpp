@@ -11,18 +11,21 @@ int main()
 	cin>>path;
 	gitHubUser *users;
 	readDataFromFile(users, path);
+	return 0;
 
 }
 void readDataFromFile( gitHubUser * users, string filepath) // to read data from file and save into struct variables
 {
 	ifstream fin;
 	fin.open(filepath);
-	int cases;
+	int cases, folders;
 	fin>>cases;
 	users=new gitHubUser[cases];
 	for (int i=0; i<cases;i++)
 	{
 		getline(fin,users[i].firstName);
-		getline(fin
+		getline(fin,users[i].userName);
+		getline(fin,users[i].email);
+		fin>>
 
 }
