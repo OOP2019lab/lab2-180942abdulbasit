@@ -50,6 +50,9 @@ int main()
 	cout<<a->password<<endl;
 	cout<<a->email<<endl;
 	cout<<a->folderCount<<endl;
+	delete[] user;
+	user=nullptr;
+	a=nullptr;
 
 
 
