@@ -1,107 +1,144 @@
 #include <iostream>
-#include <string>
 #include "Q1_180942.h"
+#include <fstream>
 using namespace std;
-bool Comparison(gitHubUser a, gitHubUser b);
-void inputFromUser(gitHubUser* arr, int size);
-gitHubUser* searchUser ( gitHubUser* users, int size, string userName);
-
+void readDataFromFile( gitHubUser * users, string filepath);
+void setEduBckGrnd(gitHubUser &users);
+void print(gitHubUser &users);
+void remove(gitHubUser &users);
+void backup(gitHubUser *originalArry, gitHubUser *backupArry, int userCount);
 int main()
 {
-
-	gitHubUser user1, user2;
-	cout<<"For user 1:"<<endl;
-	cout<<"Enter first name:"<<endl;
-	cin>>user1.firstName;
-	cout<<"Enter username:"<<endl;
-	cin>>user1.userName;
-	cout<<"Enter password:"<<endl;
-	cin>>user1.password;
-	cout<<"Enter email:"<<endl;
-	cin>>user1.email;
-	cout<<"Enter folder count:"<<endl;
-	cin>>user1.folderCount;
-
-	cout<<"For user 2:"<<endl;
-	cout<<"Enter first name:"<<endl;
-	cin>>user2.firstName;
-	cout<<"Enter username:"<<endl;
-	cin>>user2.userName;
-	cout<<"Enter password:"<<endl;
-	cin>>user2.password;
-	cout<<"Enter email:"<<endl;
-	cin>>user2.email;
-	cout<<"Enter folder count:"<<endl;
-	cin>>user2.folderCount;
-	cout<<endl<<"Now comparing both users (0 means both users are same)"<<endl;
-	cout<<Comparison(user1,user2);
-
-	cout<<endl<<"Now taking data for 4 users"<<endl; 
-	int size=4;
-	gitHubUser *user;
-	user=new gitHubUser[size];
-	inputFromUser(user,size);
-	cout<<"Enter username to search"<<endl;
-	string username;
-	cin>>username;
-	gitHubUser* a = searchUser(user,size,username);
-	cout<<a->firstName<<endl;
-	cout<<a->userName<<endl;
-	cout<<a->password<<endl;
-	cout<<a->email<<endl;
-	cout<<a->folderCount<<endl;
-	delete[] user;
-	user=nullptr;
-	a=nullptr;
-
-
-
+	string path;
+	cout<<"Enter file name (with path if needed): "<<endl;
+	cin>>path;
+	//path="Q1_180942.txt";
+	gitHubUser *users=nullptr;
+	readDataFromFile(users, path);
+	//memory deallocation
+	users=nullptr;
+	delete users;
 	return 0;
-
-
-
 }
-bool Comparison(gitHubUser a, gitHubUser b) // compares data of two users
+void readDataFromFile( gitHubUser * users, string filepath) // to read data from file 
 {
-	if (a.firstName==b.firstName && a.userName==b.userName && a.password==b.password && a.email==b.email && a.folderCount==b.folderCount)
-		return 0;
-	else return 1;
-}
-void inputFromUser(gitHubUser* arr, int size) // takes input of data of users
-{
-	for (int i=0; i<size; i++)
+	gitHubUser *backupArr=nullptr;
+	cout<<"......Reading Data From File......."<<endl;
+	char e;
+	ifstream fin;
+	fin.open(filepath);
+	int cases=0;
+	fin>>cases;
+	fin.ignore();
+	users=new gitHubUser[cases];
+	for (int i=0; i<cases;i++)
 	{
-		cout<<"For user "<<i+1<<endl;
-
-		cout<<"Enter first name:"<<endl;
-		cin>>arr[i].firstName;
-		cout<<"Enter username:"<<endl;
-		cin>>arr[i].userName;
-		if (i>0)
-			if (arr[i].userName==arr[i-1].userName)
-			{
-				cout<<"Username already exist. Enter another username"<<endl;
-				while(1)
-				{
-					cin>>arr[i].userName;
-					if (arr[i].userName!=arr[i-1].userName)
-						break;
-				}
-
-			}
-			cout<<"Enter password:"<<endl;
-			cin>>arr[i].password;
-			cout<<"Enter email:"<<endl;
-			cin>>arr[i].email;
-			cout<<"Enter folder count:"<<endl;
-			cin>>arr[i].folderCount;
+		getline(fin,users[i].firstName);
+		getline(fin,users[i].userName);
+		getline(fin,users[i].email);
+		fin>>users[i].folders;
+		fin.ignore();
+		users[i].folderName=new string[users[i].folders];
+		for(int j=0; j<users[i].folders; j++)
+		{
+			getline(fin,users[i].folderName[j]);
+		}
+		users[i].institute_name=nullptr;
+		users[i].qualification_level=nullptr;
+		cout<<"......Menu for "<<users[i].firstName<<"......."<<endl;
+		cout<<"1) Add Educational Background"<<endl;
+		cout<<"2) Print Data"<<endl;
+		cout<<"3) Remove Educational Background"<<endl;
+		cout<<"4) Create Backup"<<endl;
+		cout<<"5) Continue reading from file"<<endl;
+		//showing menu for every user
+		while(1)
+		{
+			cout<<endl<<"Enter your choice: "<<endl;
+			cin>>e;
+			if (e=='1')
+				setEduBckGrnd(users[i]);
+			else if (e=='2')
+				print(users[i]);
+			else if (e=='3')
+				remove(users[i]);
+			else if (e=='4')
+				backup(users,backupArr,i);
+			else if (e=='5')
+				break;
+			else
+				cout<<"Wrong choice"<<endl;
+		}
+		//memory deallocation
+		users[i].institute_name=nullptr;
+		users[i].qualification_level=nullptr;
+		delete users[i].qualification_level;
+		delete users[i].institute_name;
 	}
+	cout<<"..........File has been read............."<<endl;
+	//memory deallocation
+	backupArr=nullptr;
+	delete backupArr;
 }
-gitHubUser* searchUser ( gitHubUser* users, int size, string userName) // find a specific username within data of 4 users 
+void setEduBckGrnd(gitHubUser &users) //inputs educational background for a user
 {
-	for (int i=0;i<size;i++)
+	cin.ignore();
+	string str;
+	cout<<users.firstName<<" Enter Institute name: "<<endl;
+	getline(cin,str);
+	users.institute_name=new string();
+	*users.institute_name=str;
+	cout<<users.firstName<<" Enter Qualification: "<<endl;
+	getline(cin,str);
+	users.qualification_level=new string();
+	*users.qualification_level=str;
+}
+void print(gitHubUser &users) //prints data of user
+{
+	cout<<"........................"<<endl;
+	cout<<"First Name: "<<users.firstName<<endl;
+	cout<<"Username: "<<users.userName<<endl;
+	cout<<"Email: "<<users.email<<endl;
+	cout<<"No of Folders: "<<users.folders<<endl;
+	for (int i=0;i<users.folders;i++)
 	{
-		if (users[i].userName==userName)
-			return &users[i];
+		cout<<"Folder "<<i+1<<" Name: "<<users.folderName[i]<<endl;
 	}
+	if (*users.institute_name!="\0")
+	{
+		cout<<"Institute Name: "<<*users.institute_name<<endl;
+	}
+	if (*users.qualification_level!="\0")
+	{
+		cout<<"Qualification Level: "<<*users.qualification_level<<endl;
+	}
+	cout<<"........................"<<endl;
+}
+void remove(gitHubUser &users) //remove educational background of user
+{
+	*users.institute_name="";
+	*users.qualification_level="";
+	cout<<"Educational background removed"<<endl;
+}
+void backup(gitHubUser *originalArray, gitHubUser *backupArray, int userCount) //creates a backup array
+{
+	backupArray=new gitHubUser[userCount];
+	for(int i=0; i<userCount;i++)
+	{
+		backupArray[i].email=originalArray[i].email;
+		backupArray[i].userName=originalArray[i].userName;
+		backupArray[i].firstName=originalArray[i].firstName;
+		backupArray[i].folders=originalArray[i].folders;
+		backupArray[i].folderName=new string[backupArray[i].folders];
+		for (int j=0; j<backupArray[i].folders;j++)
+		{
+			backupArray[i].folderName=originalArray[i].folderName;
+		}
+		backupArray[i].institute_name=originalArray[i].institute_name;
+		backupArray[i].qualification_level=originalArray[i].qualification_level;
+	}
+	cout<<"Backup Array created"<<endl;
+	//memory deallocation
+	backupArray=nullptr;
+	delete backupArray;
 }

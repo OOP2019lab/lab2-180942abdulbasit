@@ -1,11 +1,13 @@
 #include <string>
 using namespace std;
+
 struct gitHubUser
 {
 	string firstName;
 	string userName;
-	string password;
 	string email;
-	int folderCount;
+	int folders;
+	string *folderName;
+	string *institute_name;
+	string *qualification_level;
 };
-
